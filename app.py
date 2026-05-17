@@ -8,6 +8,10 @@ st.set_page_config(
     layout="wide"
 )
 
+# ---------------- SESSION STATE ----------------
+if "bookmarks" not in st.session_state:
+    st.session_state.bookmarks = []
+
 # ---------------- CUSTOM CSS ----------------
 st.markdown("""
 <style>
@@ -29,7 +33,7 @@ h1, h2, h3, p, div {
     padding: 20px;
     border-radius: 15px;
     background-color: #161B22;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     border: 1px solid #30363D;
 }
 
@@ -54,6 +58,30 @@ category = st.sidebar.radio(
     ["Trending", "Finance", "Technology", "Startups", "Business"]
 )
 
+# ---------------- BOOKMARKS SIDEBAR ----------------
+st.sidebar.markdown("---")
+st.sidebar.subheader("🔖 Saved Bookmarks")
+
+if st.session_state.bookmarks:
+
+    for i, bookmark in enumerate(st.session_state.bookmarks):
+
+        col1, col2 = st.sidebar.columns([4, 1])
+
+        with col1:
+            st.markdown(
+                f"- [{bookmark['title']}]({bookmark['url']})"
+            )
+        with col2:
+            if st.button(
+                "❌",
+                key=f"remove_{i}"
+            ):
+                st.session_state.bookmarks.pop(i)
+                st.rerun()
+else:
+    st.sidebar.caption("No bookmarks yet.")
+
 # ---------------- CATEGORY MAP ----------------
 api_category_map = {
     "Trending": "technology",
@@ -69,7 +97,9 @@ selected_api_category = api_category_map.get(
 )
 
 # ---------------- FETCH ARTICLES ----------------
-articles = get_news(selected_api_category)
+with st.spinner("Fetching latest insights..."):
+
+    articles = get_news(selected_api_category)
 
 # ---------------- HEADER ----------------
 st.title("🚀 PulseIQ")
@@ -77,25 +107,39 @@ st.caption("Real-Time Finance & Tech Insights")
 
 # ---------------- TRENDING SECTION ----------------
 if category == "Trending":
+
     st.subheader("🔥 Trending Insights")
+
+    articles = articles[:5]
 
 # ---------------- EMPTY CHECK ----------------
 if not articles:
-    st.error("No articles found.")
+
+    st.error("Unable to fetch articles.")
+
     st.stop()
 
 # ---------------- RENDER ARTICLES ----------------
 for article in articles:
 
-    title = article.get("title", "No Title")
+    title = article.get(
+        "title",
+        "No Title"
+    )
+
     description = article.get(
         "description",
         "No Description Available"
     )
 
-    source_url = article.get("url", "#")
+    source_url = article.get(
+        "url",
+        "#"
+    )
 
-    image_url = article.get("urlToImage")
+    image_url = article.get(
+        "urlToImage"
+    )
 
     # ---------------- CARD ----------------
     with st.container():
@@ -107,6 +151,7 @@ for article in articles:
 
         # IMAGE
         if image_url:
+
             st.image(
                 image_url,
                 use_container_width=True
@@ -127,19 +172,50 @@ for article in articles:
         st.write("")
 
         # BUTTONS
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
+        # READ SOURCE
         with col1:
+
             st.link_button(
                 "🌐 Read Source",
                 source_url,
                 use_container_width=True
             )
 
+        # BOOKMARK
         with col2:
-            st.button(
+
+            if st.button(
                 "🔖 Bookmark",
                 key=title,
+                use_container_width=True
+            ):
+
+                already_exists = any(
+                    bookmark["title"] == title
+                    for bookmark in st.session_state.bookmarks
+                )
+
+                if not already_exists:
+
+                    st.session_state.bookmarks.append({
+                        "title": title,
+                        "url": source_url
+                    })
+
+                    st.success("Added to bookmarks!")
+                    st.rerun()
+
+                else:
+                    st.warning("Already bookmarked.")
+
+        # SHARE
+        with col3:
+
+            st.link_button(
+                "📤 Share",
+                source_url,
                 use_container_width=True
             )
 
