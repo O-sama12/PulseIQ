@@ -1,14 +1,11 @@
-from dotenv import load_dotenv
 import os
 import requests
+from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
 API_KEY = os.getenv("NEWS_API_KEY")
-
-if not API_KEY:
-    raise ValueError("NEWS_API_KEY not found in .env")
-
 
 def get_news(category="technology"):
 
@@ -20,12 +17,23 @@ def get_news(category="technology"):
         f"apiKey={API_KEY}"
     )
 
-    response = requests.get(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
 
-    if response.status_code != 200:
-        print("Error:", response.status_code)
+    try:
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=10
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        return data.get("articles", [])
+
+    except requests.exceptions.RequestException as e:
+        print("ERROR:", e)
         return []
-
-    data = response.json()
-
-    return data.get("articles", [])
