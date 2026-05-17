@@ -374,15 +374,19 @@ for article in articles:
 
         # SHARE
         with col3:
+            share_text = f"{title}\n\n{source_url}\n\n Shared via PulseIQ ⚡"
             if st.button(
                 "📤 Share",
                 key=f"share_{title}",
                 use_container_width=True
             ):
-                share_text = f"{title}\n\n{source_url}\n\nShared via PulseIQ ⚡"
-
                 st.session_state["share_text"] = share_text
-                st.toast("📋 Share text ready below 👇")
+                st.toast("📋 Copy the text below 👇")
+        if st.session_state.get("share_text") == share_text:
+            st.code(share_text)
+                
+
+                
 
         # AI ANALYSIS
         with col4:
