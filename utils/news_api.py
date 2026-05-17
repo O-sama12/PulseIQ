@@ -2,8 +2,7 @@ import os
 import requests
 import streamlit as st
 
-# Load environment variables
-load_dotenv()
+
 
 API_KEY = st.secrets["NEWS_API_KEY"]
 
