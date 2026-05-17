@@ -1,11 +1,9 @@
 import os
-from dotenv import load_dotenv
+import streamlit as st
 from groq import Groq
 
-load_dotenv()
-
 client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
+    api_key=st.secrets["GROQ_API_KEY"]
 )
 
 def analyze_fake_news(title, description):

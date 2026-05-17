@@ -1,11 +1,11 @@
 import os
 import requests
-from dotenv import load_dotenv
+import streamlit as st
 
 # Load environment variables
 load_dotenv()
 
-API_KEY = os.getenv("NEWS_API_KEY")
+API_KEY = st.secrets["NEWS_API_KEY"]
 
 def get_news(category="technology"):
 
