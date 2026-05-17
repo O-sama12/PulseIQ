@@ -309,7 +309,7 @@ for article in articles:
 
             st.image(
                 image_url,
-                use_container_width=True
+                width="stretch"
             )
 
         # TITLE
@@ -335,7 +335,7 @@ for article in articles:
             st.link_button(
                 "🌐 Source",
                 source_url,
-                use_container_width=True
+                width="stretch"
             )
 
         # BOOKMARK
@@ -344,7 +344,7 @@ for article in articles:
             if st.button(
                 "🔖 Save",
                 key=title,
-                use_container_width=True
+                width="stretch"
             ):
 
                 already_exists = any(
@@ -378,7 +378,7 @@ for article in articles:
             st.link_button(
                 "📤 Share",
                 source_url,
-                use_container_width=True
+                width="stretch"
             )
 
         # AI ANALYSIS
@@ -387,7 +387,7 @@ for article in articles:
             if st.button(
                 "🧠 AI Check",
                 key=f"ai_{title}",
-                use_container_width=True
+                width="stretch"
             ):
 
                 with st.spinner(
